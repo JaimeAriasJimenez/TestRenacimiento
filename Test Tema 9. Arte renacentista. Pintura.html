@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barroco y Rococó</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-md rounded-lg p-6 max-w-md w-full">
+        <h1 class="text-2xl font-bold text-center mb-4">Barroco y Rococó</h1>
+        <div id="quiz-container">
+            <!-- Aquí se mostrará la pregunta -->
+        </div>
+        <div id="feedback" class="text-center mt-4 text-lg font-medium"></div>
+        <div id="score" class="text-center mt-4">
+            <p>Aciertos: <span id="correct-count">0</span></p>
+            <p>Fallos: <span id="incorrect-count">0</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Depósito de preguntas y respuestas
+        const allQuestions = [
+           { question: "¿En qué siglo surge el Renacimiento en Italia?", options: ["XIV", "XV", "XVI", "XVII"], answer: 1 },
+    { question: "¿Qué concepto filosófico caracteriza al Renacimiento?", options: ["Teocentrismo", "Racionalismo", "Humanismo", "Escepticismo"], answer: 2 },
+    { question: "¿Qué evento facilitó la llegada de textos clásicos a Italia?", options: ["La peste negra", "La caída de Constantinopla", "La invención de la imprenta", "El descubrimiento de América"], answer: 1 },
+    { question: "¿Qué familia florentina fue clave en el mecenazgo del Renacimiento?", options: ["Sforza", "Borgia", "Médici", "Habsburgo"], answer: 2 },
+    { question: "¿Quién inventó la imprenta en 1448?", options: ["Leonardo da Vinci", "Johannes Gutenberg", "Filippo Brunelleschi", "Erasmo de Rotterdam"], answer: 1 },
+    { question: "¿En qué ciudad italiana surge el Quattrocento?", options: ["Roma", "Venecia", "Florencia", "Milán"], answer: 2 },
+    { question: "¿Qué autor italiano es considerado el padre del humanismo?", options: ["Maquiavelo", "Dante", "Petrarca", "Boccaccio"], answer: 2 },
+    { question: "¿Qué disciplina científica influyó en la perspectiva renacentista?", options: ["Física", "Matemáticas", "Química", "Astronomía"], answer: 1 },
+    { question: "¿Qué nueva técnica pictórica introdujo Leonardo da Vinci?", options: ["Claroscuro", "Sfumato", "Impasto", "Divisionismo"], answer: 1 },
+    { question: "¿Qué obra de Masaccio fue revolucionaria por su uso de la perspectiva?", options: ["La Anunciación", "La Trinidad", "El Nacimiento de Venus", "La Última Cena"], answer: 1 },
+    { question: "¿Qué pintor es famoso por sus escenas mitológicas como 'El nacimiento de Venus'?", options: ["Rafael", "Tintoretto", "Botticelli", "Tiziano"], answer: 2 },
+    { question: "¿Qué periodo del Renacimiento se considera su plenitud?", options: ["Quattrocento", "Cinquecento", "Manierismo", "Gótico tardío"], answer: 1 },
+    { question: "¿Qué técnica utilizó Rafael en sus frescos del Vaticano?", options: ["Óleo", "Temple", "Fresco", "Acuarela"], answer: 2 },
+    { question: "¿Qué artista pintó 'La Escuela de Atenas'?", options: ["Leonardo da Vinci", "Rafael", "Botticelli", "Veronés"], answer: 1 },
+    { question: "¿Qué obra de Miguel Ángel representa escenas del Génesis?", options: ["El Juicio Final", "La Creación de Adán", "La Última Cena", "Las Bodas de Caná"], answer: 1 },
+    { question: "¿Qué artista es considerado un polímata del Renacimiento?", options: ["Tiziano", "Brunelleschi", "Leonardo da Vinci", "Giotto"], answer: 2 },
+    { question: "¿Qué característica define al manierismo?", options: ["Naturalismo", "Equilibrio clásico", "Expresividad exagerada", "Geometría precisa"], answer: 2 },
+    { question: "¿Qué pintora renacentista destacó en el retrato?", options: ["Artemisia Gentileschi", "Sofonisba Anguissola", "Judith Leyster", "Clara Peeters"], answer: 1 },
+    { question: "¿Qué artista manierista pintó 'La Virgen del cuello largo'?", options: ["Parmigianino", "Veronés", "Tintoretto", "Botticelli"], answer: 0 },
+    { question: "¿Qué característica destaca en la escuela veneciana?", options: ["Uso del dibujo", "Dominio del color y la luz", "Composiciones arquitectónicas", "Figuras alargadas"], answer: 1 },
+    { question: "¿Quién fue el pintor veneciano más influyente?", options: ["Tintoretto", "Tiziano", "Giorgione", "Veronés"], answer: 1 },
+    { question: "¿Qué retrato ecuestre pintó Tiziano?", options: ["Carlos V a caballo en Mühlberg", "Felipe II en traje negro", "Luis XIV en su trono", "El caballero de la mano en el pecho"], answer: 0 },
+    { question: "¿Qué obra de Tintoretto muestra un episodio bíblico?", options: ["Las Bodas de Caná", "El Lavatorio", "La Última Cena", "El Juicio Final"], answer: 1 },
+    { question: "¿Qué pintor manierista se caracterizó por su teatralidad?", options: ["Tiziano", "Veronés", "Parmigianino", "Tintoretto"], answer: 3 },
+    { question: "¿Qué artista pintó 'Las Bodas de Caná'?", options: ["Leonardo da Vinci", "Veronés", "Botticelli", "Giorgione"], answer: 1 },
+    { question: "¿Qué obra de Leonardo da Vinci representa una cena?", options: ["Las Bodas de Caná", "La Última Cena", "El Lavatorio", "El Bautismo de Cristo"], answer: 1 },
+    { question: "¿En qué técnica destacó Giorgione?", options: ["Perspectiva lineal", "Representación del paisaje", "Claroscuro", "Escorzo"], answer: 1 },
+    { question: "¿Qué mecenas impulsó el desarrollo del neoplatonismo en Florencia?", options: ["Carlos V", "Cosme de Médici", "Felipe II", "Julio II"], answer: 1 },
+    { question: "¿Qué personaje aparece en 'La Escuela de Atenas' representando a Platón?", options: ["Leonardo da Vinci", "Sócrates", "Aristóteles", "Miguel Ángel"], answer: 0 },
+    { question: "¿Qué obra de Rafael simboliza la filosofía clásica?", options: ["Las Bodas de Caná", "La Virgen del cuello largo", "La Escuela de Atenas", "El Lavatorio"], answer: 2 },
+    { question: "¿Cómo se llama el efecto atmosférico que desarrolló Leonardo da Vinci?", options: ["Claroscuro", "Sfumato", "Impasto", "Perspectiva lineal"], answer: 1 },
+    { question: "¿En qué obra Miguel Ángel representó el Juicio Final?", options: ["Capilla Sixtina", "Catedral de Florencia", "Santa María Novella", "Iglesia de San Lorenzo"], answer: 0 },
+    { question: "¿Qué término describe la tendencia manierista a exagerar las proporciones?", options: ["Escorzo", "Contrapposto", "Alargamiento", "Perspectiva aérea"], answer: 2 },
+    { question: "¿Qué estilo artístico influyó en el Renacimiento?", options: ["Románico", "Gótico", "Clásico grecorromano", "Barroco"], answer: 2 },
+    { question: "¿Qué elemento arquitectónico reintrodujo Brunelleschi?", options: ["Cúpula autoportante", "Órdenes clásicos", "Columnas salomónicas", "Arcos apuntados"], answer: 0 },
+    { question: "¿Qué evento marca el final del Renacimiento clásico?", options: ["Saqueo de Roma (1527)", "Paz de Westfalia", "Caída de Constantinopla", "Fundación del Vaticano"], answer: 0 },
+    { question: "¿Qué concepto define la visión antropocéntrica del Renacimiento?", options: ["Teocentrismo", "Humanismo", "Materialismo", "Existencialismo"], answer: 1 }
+            // Agrega más preguntas aquí hasta completar las 40
+        ];
+
+        // Función para obtener 20 preguntas aleatorias sin modificar el array original
+        function getRandomQuestions() {
+            let shuffled = [...allQuestions].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, 20);
+        }
+
+        // Desordenar las opciones de respuesta
+        function shuffleOptions(options) {
+            return [...options].sort(() => Math.random() - 0.5);
+        }
+
+        let questions = getRandomQuestions();
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+
+        const quizContainer = document.getElementById("quiz-container");
+        const feedbackContainer = document.getElementById("feedback");
+        const correctCountSpan = document.getElementById("correct-count");
+        const incorrectCountSpan = document.getElementById("incorrect-count");
+
+        function loadQuestion() {
+            const questionData = questions[currentQuestionIndex];
+            const shuffledOptions = shuffleOptions([...questionData.options]);
+            feedbackContainer.textContent = ""; // Limpiar feedback anterior
+            quizContainer.innerHTML = `
+                <p class="text-lg font-medium mb-4">${questionData.question}</p>
+                <div class="space-y-2">
+                    ${shuffledOptions.map((option) => `
+                        <button 
+                            class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none" 
+                            onclick="checkAnswer('${option}', '${questionData.options[questionData.answer]}')">
+                            ${option}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function checkAnswer(selectedOption, correctAnswer) {
+            if (selectedOption === correctAnswer) {
+                feedbackContainer.textContent = "¡Correcto!";
+                feedbackContainer.classList.add("text-green-500");
+                feedbackContainer.classList.remove("text-red-500");
+                correctCount++;
+            } else {
+                feedbackContainer.textContent = `Incorrecto. La respuesta correcta era: ${correctAnswer}`;
+                feedbackContainer.classList.add("text-red-500");
+                feedbackContainer.classList.remove("text-green-500");
+                incorrectCount++;
+            }
+
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                setTimeout(loadQuestion, 1000); // Esperar un segundo antes de cargar la siguiente pregunta
+            } else {
+                quizContainer.innerHTML = `
+                    <p class="text-lg font-medium">Has completado el quiz.</p>
+                    <p class="mt-2">Aciertos: ${correctCount}</p>
+                    <p>Fallos: ${incorrectCount}</p>
+                    <button class="mt-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 focus:outline-none" onclick="restartQuiz()">Reiniciar</button>
+                `;
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            feedbackContainer.textContent = "";
+            questions = getRandomQuestions();
+            loadQuestion();
+        }
+
+        // Cargar las preguntas aleatorias
+        loadQuestion();
+    </script>
+</body>
+</html>
